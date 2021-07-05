@@ -1,16 +1,20 @@
 'use strict';
  
 const express = require('express');
-// require('dotenv').config();
-// const cros = require('cros');
-
+require('dotenv').config();
+const cros = require('cros');
 const server = express();
+const weatherData = require('./weather.json')
+const PORT = process.env.PORT;
+server.use(cros());
 
-// this work like a radio frequency
-const PORT = 3001;
-// localhost:3001/
-server.get('/',(req,res)=>{
-    res.status(200).send('is it work by now');
+
+
+server.get('/',(req,res) =>{
+    res.status(200).send('Does it work?')
+})
+server.get('/weather',(req,res)=>{
+    let selectedCity = weatherData.data.find(element  )
 })
 
 

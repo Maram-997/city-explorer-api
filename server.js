@@ -9,16 +9,21 @@ const PORT = process.env.PORT;
 server.use(cros());
 
 
-
-server.get('/',(req,res) =>{
-    res.status(200).send('Does it work?')
-})
+//localhost:3001weather?cityName=Amman
 server.get('/weather',(req,res)=>{
-    let selectedCity = weatherData.data.find(element  )
+    let selectedCity = weatherData.data.find(element =>{
+        if(element.city_name == req.query.cityName){
+            return element
+        }
+    })
+    res.status(200).send(selectedCity);
+
 })
 
 
-
+server.get('*',(req,res) =>{
+    res.status(404).send('Unable to reach out :(')
+})
 
 
 

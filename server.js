@@ -2,29 +2,39 @@
  
 const express = require('express');
 require('dotenv').config();
-const cros = require('cros');
-const server = express();
+const cors = require('cors');
 const weatherData = require('./weather.json')
+const server = express();
 const PORT = process.env.PORT;
-server.use(cros());
+server.use(cors());
 
 
-//localhost:3001weather?cityName=Amman
+// http://localhost:3001/weather?cityName=Amman
 server.get('/weather',(req,res)=>{
-    let selectedCity = weatherData.data.find(element =>{
+    let selectedCity = weatherData.find(element =>{
         if(element.city_name == req.query.cityName){
             return element
         }
-    })
-    res.status(200).send(selectedCity);
 
+    })
+    let chosenCity = selectedCity.data.map(days => {
+        return(
+            new Forecast (days.valid_date , days.weather.description)
+        )
+    })
+    res.status(200).send(chosenCity);
 })
 
 
 server.get('*',(req,res) =>{
     res.status(404).send('Unable to reach out :(')
 })
-
+ class Forecast {
+     constructor(date, description){
+         this.date= date;
+         this.description = description;
+     }
+ }
 
 
 server.listen(PORT,()=>{

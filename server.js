@@ -8,22 +8,44 @@ const server = express();
 const PORT = process.env.PORT;
 server.use(cors());
 
+server.get('/getWeather', getWeatherHandler)
 
 // http://localhost:3001/weather?cityName=Amman
-server.get('/weather',(req,res)=>{
-    let selectedCity = weatherData.find(element =>{
-        if(element.city_name == req.query.cityName){
-            return element
-        }
+// server.get('/weather',(req,res)=>{
+//     let selectedCity = weatherData.find(element =>{
+//         if(element.city_name == req.query.cityName){
+//             return element
+//         }
 
+//     })
+//     let chosenCity = selectedCity.data.map(days => {
+//         return(
+//             new Forecast (days.valid_date , days.weather.description)
+//         )
+//     })
+//     res.status(200).send(chosenCity);
+// })
+
+
+function getWeatherHandler (req, res) {
+    let sQuery = req.query.searchQuery;
+    //let url = `https://api.weatherbit.io/v2.0/current?query=${sQuery}&key=${process.env.KEY}`
+
+    axios
+    .get(url)
+    .then(weatherData=>{
+        console.log(photoData.data)
+        res.send(weatherData.data.results) 
     })
-    let chosenCity = selectedCity.data.map(days => {
-        return(
-            new Forecast (days.valid_date , days.weather.description)
-        )
+    .catch(error=>{
+        res.status(500).send(error)
     })
-    res.status(200).send(chosenCity);
-})
+
+
+}
+
+
+ 
 
 
 server.get('*',(req,res) =>{

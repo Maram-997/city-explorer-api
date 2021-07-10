@@ -1,18 +1,33 @@
 'use strict';
 const axios = require('axios');
 
+
+let inMemory= {};
+
 function getMoviesHandler(req,res){
     let sQuery = req.query.cityName;
     let moviesUrl =`https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIES_KEY}&query=${sQuery}`
- axios
- .get(moviesUrl)
- .then(moviesData =>{
-     let selectedMovie = moviesData.data.results.map(movie => {
-         return new Movie (movie)
-     })
-     res.send(selectedMovie)
- }) 
-   
+ 
+ if(inMemory[sQuery] !== undefined){
+     res.status(200).send(inMemory[sQuery]);
+ } else{
+    axios
+    .get(moviesUrl)
+    .then(moviesData =>{
+        let selectedMovie = moviesData.data.results.map(movie => {
+            return new Movie (movie)
+        })
+        inMemory[sQuery] = selectedMovie;
+        res.status(200).send(selectedMovie)
+    }) 
+      
+
+
+
+
+ }
+ 
+ 
   
 }
 

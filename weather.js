@@ -8,22 +8,29 @@ const axios = require('axios');
 
 
 // http://localhost:3001/weather?cityName=Amman
+
+let inMemoryW = {};
+
 function getWeatherHandler (req, res) {
     let sQuery = req.query.cityName;
     let url = `https://api.weatherbit.io/v2.0/forecast/daily?city=${sQuery}&key=${process.env.WEATHER_KEY}&days=5`
+    if (inMemoryW[sQuery] !== undefined) {
+        res.status(200).send(inMemoryW[sQuery]);
+    }else{
+        axios
+        .get(url)
+        .then(weatherData=>{
+            let selectedCity = weatherData.data.data.map(day => {
+                return new Forecast (day.valid_date, day.weather.description)
+            })  
+            inMemoryW[sQuery] = selectedCity;
+            res.status(200).send(selectedCity) 
+        })
+        .catch(error=>{
+            res.status(500).send(error)
+        })
+        }
     
-    axios
-    .get(url)
-    .then(weatherData=>{
-        let selectedCity = weatherData.data.data.map(day => {
-            return new Forecast (day.valid_date, day.weather.description)
-        })  
-        res.send(selectedCity) 
-    })
-    .catch(error=>{
-        res.status(500).send(error)
-    })
-
 
 }
 
